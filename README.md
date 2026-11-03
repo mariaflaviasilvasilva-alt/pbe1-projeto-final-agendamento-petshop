@@ -92,10 +92,616 @@ chmod +x testes_automacao.sh
 cat resultado_execucao.log
 ```
 
-Saída do terminal (colar aqui a saída real, em texto, depois de rodar):
+Saída do terminal: ./testes_automacao.sh:
+```bash
+==============================================
+ TESTES DA API - PET SHOP - 03/11/2026 02:13:32
+==============================================
 
+##### 1. CADASTRAR CLIENTE #####
+
+>>> POST /clientes
+>>> Corpo: {"nome":"Maria Souza","telefone":"11999990000","email":"maria@email.com"}
+Status recebido: 201
+{
+  "id": 2,
+  "nome": "Maria Souza",
+  "telefone": "11999990000",
+  "email": "maria@email.com"
+}
+Resultado: OK (esperado 201)
+ID do cliente criado: 2
+
+##### 2. LISTAR E BUSCAR CLIENTES #####
+
+>>> GET /clientes
+Status recebido: 200
+[
+  {
+    "id": 2,
+    "nome": "Maria Souza",
+    "telefone": "11999990000",
+    "email": "maria@email.com"
+  }
+]
+Resultado: OK (esperado 200)
+
+>>> GET /clientes/2
+Status recebido: 200
+{
+  "id": 2,
+  "nome": "Maria Souza",
+  "telefone": "11999990000",
+  "email": "maria@email.com"
+}
+Resultado: OK (esperado 200)
+
+>>> GET /clientes?nome=maria
+Status recebido: 200
+[
+  {
+    "id": 2,
+    "nome": "Maria Souza",
+    "telefone": "11999990000",
+    "email": "maria@email.com"
+  }
+]
+Resultado: OK (esperado 200)
+
+##### 3. ATUALIZAR CLIENTE (PUT E PATCH) #####
+
+>>> PUT /clientes/2
+>>> Corpo: {"nome":"Maria Souza Lima","telefone":"11988887777","email":"maria.lima@email.com"}
+Status recebido: 200
+{
+  "id": 2,
+  "nome": "Maria Souza Lima",
+  "telefone": "11988887777",
+  "email": "maria.lima@email.com"
+}
+Resultado: OK (esperado 200)
+
+>>> PATCH /clientes/2
+>>> Corpo: {"telefone":"11977776666"}
+Status recebido: 200
+{
+  "id": 2,
+  "nome": "Maria Souza Lima",
+  "telefone": "11977776666",
+  "email": "maria.lima@email.com"
+}
+Resultado: OK (esperado 200)
+
+##### 4. CRIAR AGENDAMENTO #####
+
+>>> POST /agendamentos
+>>> Corpo: {"clienteId":2,"nomePet":"Thor","especie":"Cachorro","servico":"banho","data":"2026-12-10","horario":"14:00"}
+Status recebido: 201
+{
+  "id": 2,
+  "clienteId": 2,
+  "nomePet": "Thor",
+  "especie": "Cachorro",
+  "servico": "banho",
+  "data": "2026-12-10",
+  "horario": "14:00",
+  "status": "AGENDADO"
+}
+Resultado: OK (esperado 201)
+ID do agendamento criado: 2
+
+>>> GET /agendamentos
+Status recebido: 200
+[
+  {
+    "id": 2,
+    "clienteId": 2,
+    "nomePet": "Thor",
+    "especie": "Cachorro",
+    "servico": "banho",
+    "data": "2026-12-10",
+    "horario": "14:00",
+    "status": "AGENDADO"
+  }
+]
+Resultado: OK (esperado 200)
+
+>>> GET /agendamentos/2
+Status recebido: 200
+{
+  "id": 2,
+  "clienteId": 2,
+  "nomePet": "Thor",
+  "especie": "Cachorro",
+  "servico": "banho",
+  "data": "2026-12-10",
+  "horario": "14:00",
+  "status": "AGENDADO"
+}
+Resultado: OK (esperado 200)
+
+##### 5. ATUALIZAR AGENDAMENTO (PUT E PATCH) #####
+
+>>> PUT /agendamentos/2
+>>> Corpo: {"clienteId":2,"nomePet":"Thor","especie":"Cachorro","servico":"tosa","data":"2026-12-11","horario":"15:00","status":"AGENDADO"}
+Status recebido: 200
+{
+  "id": 2,
+  "clienteId": 2,
+  "nomePet": "Thor",
+  "especie": "Cachorro",
+  "servico": "tosa",
+  "data": "2026-12-11",
+  "horario": "15:00",
+  "status": "AGENDADO"
+}
+Resultado: OK (esperado 200)
+
+>>> PATCH /agendamentos/2
+>>> Corpo: {"status":"CONCLUIDO"}
+Status recebido: 200
+{
+  "id": 2,
+  "clienteId": 2,
+  "nomePet": "Thor",
+  "especie": "Cachorro",
+  "servico": "tosa",
+  "data": "2026-12-11",
+  "horario": "15:00",
+  "status": "CONCLUIDO"
+}
+Resultado: OK (esperado 200)
+
+##### 6. TESTAR FILTROS #####
+
+>>> GET /agendamentos?status=CONCLUIDO
+Status recebido: 200
+[
+  {
+    "id": 2,
+    "clienteId": 2,
+    "nomePet": "Thor",
+    "especie": "Cachorro",
+    "servico": "tosa",
+    "data": "2026-12-11",
+    "horario": "15:00",
+    "status": "CONCLUIDO"
+  }
+]
+Resultado: OK (esperado 200)
+
+>>> GET /agendamentos?servico=tosa
+Status recebido: 200
+[
+  {
+    "id": 2,
+    "clienteId": 2,
+    "nomePet": "Thor",
+    "especie": "Cachorro",
+    "servico": "tosa",
+    "data": "2026-12-11",
+    "horario": "15:00",
+    "status": "CONCLUIDO"
+  }
+]
+Resultado: OK (esperado 200)
+
+>>> GET /agendamentos?status=CANCELADO
+Status recebido: 200
+[]
+Resultado: OK (esperado 200)
+
+##### 7. TESTAR ERROS (400 E 404) #####
+
+>>> POST /clientes
+>>> Corpo: {"nome":"Sem Telefone"}
+Status recebido: 400
+{
+  "erro": "Campo(s) obrigatório(s) ausente(s): telefone"
+}
+Resultado: OK (esperado 400)
+
+>>> POST /agendamentos
+>>> Corpo: {"clienteId":2,"nomePet":"Rex"}
+Status recebido: 400
+{
+  "erro": "Campo(s) obrigatório(s) ausente(s): especie, servico, data, horario"
+}
+Resultado: OK (esperado 400)
+
+>>> GET /clientes/9999
+Status recebido: 404
+{
+  "erro": "Cliente não encontrado"
+}
+Resultado: OK (esperado 404)
+
+>>> GET /agendamentos/9999
+Status recebido: 404
+{
+  "erro": "Agendamento não encontrado"
+}
+Resultado: OK (esperado 404)
+
+>>> POST /agendamentos
+>>> Corpo: {"clienteId":9999,"nomePet":"Rex","especie":"Cachorro","servico":"banho","data":"2026-12-10","horario":"10:00"}
+Status recebido: 404
+{
+  "erro": "Cliente não encontrado para o clienteId informado"
+}
+Resultado: OK (esperado 404)
+
+>>> PUT /clientes/9999
+>>> Corpo: {"nome":"X","telefone":"1"}
+Status recebido: 404
+{
+  "erro": "Cliente não encontrado"
+}
+Resultado: OK (esperado 404)
+
+>>> PATCH /agendamentos/9999
+>>> Corpo: {"status":"CANCELADO"}
+Status recebido: 404
+{
+  "erro": "Agendamento não encontrado"
+}
+Resultado: OK (esperado 404)
+
+>>> DELETE /clientes/9999
+Status recebido: 404
+{
+  "erro": "Cliente não encontrado"
+}
+Resultado: OK (esperado 404)
+
+##### 8. REMOVER OS REGISTROS CRIADOS #####
+
+>>> DELETE /agendamentos/2
+Status recebido: 200
+{
+  "mensagem": "Agendamento removido com sucesso",
+  "agendamento": {
+    "id": 2,
+    "clienteId": 2,
+    "nomePet": "Thor",
+    "especie": "Cachorro",
+    "servico": "tosa",
+    "data": "2026-12-11",
+    "horario": "15:00",
+    "status": "CONCLUIDO"
+  }
+}
+Resultado: OK (esperado 200)
+
+>>> DELETE /clientes/2
+Status recebido: 200
+{
+  "mensagem": "Cliente removido com sucesso",
+  "cliente": {
+    "id": 2,
+    "nome": "Maria Souza Lima",
+    "telefone": "11977776666",
+    "email": "maria.lima@email.com"
+  }
+}
+Resultado: OK (esperado 200)
+
+>>> GET /clientes/2
+Status recebido: 404
+{
+  "erro": "Cliente não encontrado"
+}
+Resultado: OK (esperado 404)
+
+==============================================
+ FIM: todos os testes passaram.
+==============================================
 ```
-(colar aqui o conteúdo do resultado_execucao.log)
+Saída do terminal: "resultado_execucao.log":
+
+```bash
+==============================================
+ TESTES DA API - PET SHOP - 03/11/2026 02:10:38
+==============================================
+
+##### 1. CADASTRAR CLIENTE #####
+
+>>> POST /clientes
+>>> Corpo: {"nome":"Maria Souza","telefone":"11999990000","email":"maria@email.com"}
+Status recebido: 201
+{
+  "id": 1,
+  "nome": "Maria Souza",
+  "telefone": "11999990000",
+  "email": "maria@email.com"
+}
+Resultado: OK (esperado 201)
+ID do cliente criado: 1
+
+##### 2. LISTAR E BUSCAR CLIENTES #####
+
+>>> GET /clientes
+Status recebido: 200
+[
+  {
+    "id": 1,
+    "nome": "Maria Souza",
+    "telefone": "11999990000",
+    "email": "maria@email.com"
+  }
+]
+Resultado: OK (esperado 200)
+
+>>> GET /clientes/1
+Status recebido: 200
+{
+  "id": 1,
+  "nome": "Maria Souza",
+  "telefone": "11999990000",
+  "email": "maria@email.com"
+}
+Resultado: OK (esperado 200)
+
+>>> GET /clientes?nome=maria
+Status recebido: 200
+[
+  {
+    "id": 1,
+    "nome": "Maria Souza",
+    "telefone": "11999990000",
+    "email": "maria@email.com"
+  }
+]
+Resultado: OK (esperado 200)
+
+##### 3. ATUALIZAR CLIENTE (PUT E PATCH) #####
+
+>>> PUT /clientes/1
+>>> Corpo: {"nome":"Maria Souza Lima","telefone":"11988887777","email":"maria.lima@email.com"}
+Status recebido: 200
+{
+  "id": 1,
+  "nome": "Maria Souza Lima",
+  "telefone": "11988887777",
+  "email": "maria.lima@email.com"
+}
+Resultado: OK (esperado 200)
+
+>>> PATCH /clientes/1
+>>> Corpo: {"telefone":"11977776666"}
+Status recebido: 200
+{
+  "id": 1,
+  "nome": "Maria Souza Lima",
+  "telefone": "11977776666",
+  "email": "maria.lima@email.com"
+}
+Resultado: OK (esperado 200)
+
+##### 4. CRIAR AGENDAMENTO #####
+
+>>> POST /agendamentos
+>>> Corpo: {"clienteId":1,"nomePet":"Thor","especie":"Cachorro","servico":"banho","data":"2026-12-10","horario":"14:00"}
+Status recebido: 201
+{
+  "id": 1,
+  "clienteId": 1,
+  "nomePet": "Thor",
+  "especie": "Cachorro",
+  "servico": "banho",
+  "data": "2026-12-10",
+  "horario": "14:00",
+  "status": "AGENDADO"
+}
+Resultado: OK (esperado 201)
+ID do agendamento criado: 1
+
+>>> GET /agendamentos
+Status recebido: 200
+[
+  {
+    "id": 1,
+    "clienteId": 1,
+    "nomePet": "Thor",
+    "especie": "Cachorro",
+    "servico": "banho",
+    "data": "2026-12-10",
+    "horario": "14:00",
+    "status": "AGENDADO"
+  }
+]
+Resultado: OK (esperado 200)
+
+>>> GET /agendamentos/1
+Status recebido: 200
+{
+  "id": 1,
+  "clienteId": 1,
+  "nomePet": "Thor",
+  "especie": "Cachorro",
+  "servico": "banho",
+  "data": "2026-12-10",
+  "horario": "14:00",
+  "status": "AGENDADO"
+}
+Resultado: OK (esperado 200)
+
+##### 5. ATUALIZAR AGENDAMENTO (PUT E PATCH) #####
+
+>>> PUT /agendamentos/1
+>>> Corpo: {"clienteId":1,"nomePet":"Thor","especie":"Cachorro","servico":"tosa","data":"2026-12-11","horario":"15:00","status":"AGENDADO"}
+Status recebido: 200
+{
+  "id": 1,
+  "clienteId": 1,
+  "nomePet": "Thor",
+  "especie": "Cachorro",
+  "servico": "tosa",
+  "data": "2026-12-11",
+  "horario": "15:00",
+  "status": "AGENDADO"
+}
+Resultado: OK (esperado 200)
+
+>>> PATCH /agendamentos/1
+>>> Corpo: {"status":"CONCLUIDO"}
+Status recebido: 200
+{
+  "id": 1,
+  "clienteId": 1,
+  "nomePet": "Thor",
+  "especie": "Cachorro",
+  "servico": "tosa",
+  "data": "2026-12-11",
+  "horario": "15:00",
+  "status": "CONCLUIDO"
+}
+Resultado: OK (esperado 200)
+
+##### 6. TESTAR FILTROS #####
+
+>>> GET /agendamentos?status=CONCLUIDO
+Status recebido: 200
+[
+  {
+    "id": 1,
+    "clienteId": 1,
+    "nomePet": "Thor",
+    "especie": "Cachorro",
+    "servico": "tosa",
+    "data": "2026-12-11",
+    "horario": "15:00",
+    "status": "CONCLUIDO"
+  }
+]
+Resultado: OK (esperado 200)
+
+>>> GET /agendamentos?servico=tosa
+Status recebido: 200
+[
+  {
+    "id": 1,
+    "clienteId": 1,
+    "nomePet": "Thor",
+    "especie": "Cachorro",
+    "servico": "tosa",
+    "data": "2026-12-11",
+    "horario": "15:00",
+    "status": "CONCLUIDO"
+  }
+]
+Resultado: OK (esperado 200)
+
+>>> GET /agendamentos?status=CANCELADO
+Status recebido: 200
+[]
+Resultado: OK (esperado 200)
+
+##### 7. TESTAR ERROS (400 E 404) #####
+
+>>> POST /clientes
+>>> Corpo: {"nome":"Sem Telefone"}
+Status recebido: 400
+{
+  "erro": "Campo(s) obrigatório(s) ausente(s): telefone"
+}
+Resultado: OK (esperado 400)
+
+>>> POST /agendamentos
+>>> Corpo: {"clienteId":1,"nomePet":"Rex"}
+Status recebido: 400
+{
+  "erro": "Campo(s) obrigatório(s) ausente(s): especie, servico, data, horario"
+}
+Resultado: OK (esperado 400)
+
+>>> GET /clientes/9999
+Status recebido: 404
+{
+  "erro": "Cliente não encontrado"
+}
+Resultado: OK (esperado 404)
+
+>>> GET /agendamentos/9999
+Status recebido: 404
+{
+  "erro": "Agendamento não encontrado"
+}
+Resultado: OK (esperado 404)
+
+>>> POST /agendamentos
+>>> Corpo: {"clienteId":9999,"nomePet":"Rex","especie":"Cachorro","servico":"banho","data":"2026-12-10","horario":"10:00"}
+Status recebido: 404
+{
+  "erro": "Cliente não encontrado para o clienteId informado"
+}
+Resultado: OK (esperado 404)
+
+>>> PUT /clientes/9999
+>>> Corpo: {"nome":"X","telefone":"1"}
+Status recebido: 404
+{
+  "erro": "Cliente não encontrado"
+}
+Resultado: OK (esperado 404)
+
+>>> PATCH /agendamentos/9999
+>>> Corpo: {"status":"CANCELADO"}
+Status recebido: 404
+{
+  "erro": "Agendamento não encontrado"
+}
+Resultado: OK (esperado 404)
+
+>>> DELETE /clientes/9999
+Status recebido: 404
+{
+  "erro": "Cliente não encontrado"
+}
+Resultado: OK (esperado 404)
+
+##### 8. REMOVER OS REGISTROS CRIADOS #####
+
+>>> DELETE /agendamentos/1
+Status recebido: 200
+{
+  "mensagem": "Agendamento removido com sucesso",
+  "agendamento": {
+    "id": 1,
+    "clienteId": 1,
+    "nomePet": "Thor",
+    "especie": "Cachorro",
+    "servico": "tosa",
+    "data": "2026-12-11",
+    "horario": "15:00",
+    "status": "CONCLUIDO"
+  }
+}
+Resultado: OK (esperado 200)
+
+>>> DELETE /clientes/1
+Status recebido: 200
+{
+  "mensagem": "Cliente removido com sucesso",
+  "cliente": {
+    "id": 1,
+    "nome": "Maria Souza Lima",
+    "telefone": "11977776666",
+    "email": "maria.lima@email.com"
+  }
+}
+Resultado: OK (esperado 200)
+
+>>> GET /clientes/1
+Status recebido: 404
+{
+  "erro": "Cliente não encontrado"
+}
+Resultado: OK (esperado 404)
+
+==============================================
+ FIM: todos os testes passaram.
+==============================================
 ```
 
 ## Processos em background
@@ -152,7 +758,13 @@ O histórico completo está na aba **Commits** do repositório no GitHub.
 >Histórico de Atualizações
 
 **02/11/2026**
-- Adiciona README com endpoints e erros comuns. Junto com o Histórico de Atualizações
+- Atualiza README com saída do log e atualização do histórico de atualizações
+
+**02/11/2026**
+- Adiciona resultado_execucao.log
+
+**02/11/2026**
+- Adiciona README com endpoints e erros comuns. Junto com o Histórico de Atualizações - README (Maria Eduarda)
 
 **02/11/2026**
 - Adiciona script de testes: agendamentos, filtros e erros
