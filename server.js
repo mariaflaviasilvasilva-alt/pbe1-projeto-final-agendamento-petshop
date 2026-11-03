@@ -128,7 +128,59 @@ app.delete('/clientes/:id', (req, res) => {
 });
 
 // ===================== AGENDAMENTOS =====================
-// (Maély cola as rotas de agendamentos logo abaixo desta linha)
+const CAMPOS_AGENDAMENTO = ['clienteId', 'nomePet', 'especie', 'servico', 'data', 'horario'];
+
+// Listar (com filtros opcionais ?status= e ?servico=)
+app.get('/agendamentos', (req, res) => {
+  const { status, servico } = req.query;
+  let resultado = agendamentos;
+
+  if (status) {
+    resultado = resultado.filter((a) => a.status === String(status).toUpperCase());
+  }
+  if (servico) {
+    resultado = resultado.filter((a) =>
+      a.servico.toLowerCase().includes(String(servico).toLowerCase())
+    );
+  }
+
+  res.status(200).json(resultado);
+});
+
+// Buscar por ID
+app.get('/agendamentos/:id', (req, res) => {
+  const agendamento = buscarAgendamento(req.params.id);
+  if (!agendamento) return erro404(res, 'Agendamento não encontrado');
+  res.status(200).json(agendamento);
+});
+
+// Criar (o clienteId precisa existir)
+app.post('/agendamentos', (req, res) => {
+  const body = req.body || {};
+  const faltando = camposFaltando(body, CAMPOS_AGENDAMENTO);
+  if (faltando.length > 0) {
+    return erro400(res, `Campo(s) obrigatório(s) ausente(s): ${faltando.join(', ')}`);
+  }
+  if (statusInvalido(body.status)) {
+    return erro400(res, 'Status inválido. Use: AGENDADO, CONCLUIDO ou CANCELADO');
+  }
+  if (!buscarCliente(body.clienteId)) {
+    return erro404(res, 'Cliente não encontrado para o clienteId informado');
+  }
+
+  const novo = {
+    id: proximoAgendamentoId++,
+    clienteId: Number(body.clienteId),
+    nomePet: body.nomePet,
+    especie: body.especie,
+    servico: body.servico,
+    data: body.data,
+    horario: body.horario,
+    status: body.status ? String(body.status).toUpperCase() : 'AGENDADO',
+  };
+  agendamentos.push(novo);
+  res.status(201).json(novo);
+});
 
 
 app.listen(PORT, () => {
