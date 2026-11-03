@@ -42,8 +42,44 @@ function erro404(res, mensagem) {
 }
 
 // ===================== CLIENTES =====================
-// (Maria Eduarda cola as rotas de clientes logo abaixo desta linha)
+// Listar (com filtro opcional ?nome=)
+app.get('/clientes', (req, res) => {
+  const { nome } = req.query;
+  let resultado = clientes;
 
+  if (nome) {
+    resultado = resultado.filter((c) =>
+      c.nome.toLowerCase().includes(String(nome).toLowerCase())
+    );
+  }
+
+  res.status(200).json(resultado);
+});
+
+// Buscar por ID
+app.get('/clientes/:id', (req, res) => {
+  const cliente = buscarCliente(req.params.id);
+  if (!cliente) return erro404(res, 'Cliente não encontrado');
+  res.status(200).json(cliente);
+});
+
+// Criar
+app.post('/clientes', (req, res) => {
+  const body = req.body || {};
+  const faltando = camposFaltando(body, ['nome', 'telefone']);
+  if (faltando.length > 0) {
+    return erro400(res, `Campo(s) obrigatório(s) ausente(s): ${faltando.join(', ')}`);
+  }
+
+  const novo = {
+    id: proximoClienteId++,
+    nome: body.nome,
+    telefone: body.telefone,
+    email: body.email || null,
+  };
+  clientes.push(novo);
+  res.status(201).json(novo);
+});
 
 // ===================== AGENDAMENTOS =====================
 // (Maély cola as rotas de agendamentos logo abaixo desta linha)
