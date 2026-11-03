@@ -183,6 +183,70 @@ app.post('/agendamentos', (req, res) => {
 });
 
 
+// Atualizar tudo (PUT)
+app.put('/agendamentos/:id', (req, res) => {
+  const agendamento = buscarAgendamento(req.params.id);
+  if (!agendamento) return erro404(res, 'Agendamento não encontrado');
+
+  const body = req.body || {};
+  const faltando = camposFaltando(body, CAMPOS_AGENDAMENTO);
+  if (faltando.length > 0) {
+    return erro400(res, `Campo(s) obrigatório(s) ausente(s): ${faltando.join(', ')}`);
+  }
+  if (statusInvalido(body.status)) {
+    return erro400(res, 'Status inválido. Use: AGENDADO, CONCLUIDO ou CANCELADO');
+  }
+  if (!buscarCliente(body.clienteId)) {
+    return erro404(res, 'Cliente não encontrado para o clienteId informado');
+  }
+
+  agendamento.clienteId = Number(body.clienteId);
+  agendamento.nomePet = body.nomePet;
+  agendamento.especie = body.especie;
+  agendamento.servico = body.servico;
+  agendamento.data = body.data;
+  agendamento.horario = body.horario;
+  agendamento.status = body.status ? String(body.status).toUpperCase() : agendamento.status;
+  res.status(200).json(agendamento);
+});
+
+// Atualizar só alguns campos (PATCH)
+app.patch('/agendamentos/:id', (req, res) => {
+  const agendamento = buscarAgendamento(req.params.id);
+  if (!agendamento) return erro404(res, 'Agendamento não encontrado');
+
+  const body = req.body || {};
+  const vazios = CAMPOS_AGENDAMENTO.filter(
+    (c) => body[c] !== undefined && String(body[c]).trim() === ''
+  );
+  if (vazios.length > 0) {
+    return erro400(res, `Campo(s) não podem ficar vazios: ${vazios.join(', ')}`);
+  }
+  if (statusInvalido(body.status)) {
+    return erro400(res, 'Status inválido. Use: AGENDADO, CONCLUIDO ou CANCELADO');
+  }
+  if (body.clienteId !== undefined && !buscarCliente(body.clienteId)) {
+    return erro404(res, 'Cliente não encontrado para o clienteId informado');
+  }
+
+  CAMPOS_AGENDAMENTO.forEach((c) => {
+    if (body[c] !== undefined) {
+      agendamento[c] = c === 'clienteId' ? Number(body[c]) : body[c];
+    }
+  });
+  if (body.status !== undefined) agendamento.status = String(body.status).toUpperCase();
+  res.status(200).json(agendamento);
+});
+
+// Remover
+app.delete('/agendamentos/:id', (req, res) => {
+  const indice = agendamentos.findIndex((a) => a.id === Number(req.params.id));
+  if (indice === -1) return erro404(res, 'Agendamento não encontrado');
+
+  const removido = agendamentos.splice(indice, 1)[0];
+  res.status(200).json({ mensagem: 'Agendamento removido com sucesso', agendamento: removido });
+});
+
 app.listen(PORT, () => {
   console.log(`Servidor rodando em http://localhost:${PORT}`);
 });
