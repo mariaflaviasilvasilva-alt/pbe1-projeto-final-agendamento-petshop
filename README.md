@@ -72,3 +72,5 @@ npm start
 
 `*` = Campos obrigatórios.  
 Os valores aceites para o campo `status` são: `AGENDADO` (padrão ao criar), `CONCLUIDO` ou `CANCELADO`.
+
+
