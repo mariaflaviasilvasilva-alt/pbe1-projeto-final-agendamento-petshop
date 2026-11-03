@@ -68,3 +68,53 @@ echo
 echo "##### 3. ATUALIZAR CLIENTE (PUT E PATCH) #####"
 chamar PUT "/clientes/$CLIENTE_ID" 200 '{"nome":"Maria Souza Lima","telefone":"11988887777","email":"maria.lima@email.com"}'
 chamar PATCH "/clientes/$CLIENTE_ID" 200 '{"telefone":"11977776666"}'
+
+
+#Script de testes, parte 2 (agendamentos, filtros, erros, remoção)
+
+
+echo
+echo "##### 4. CRIAR AGENDAMENTO #####"
+chamar POST /agendamentos 201 "{\"clienteId\":$CLIENTE_ID,\"nomePet\":\"Thor\",\"especie\":\"Cachorro\",\"servico\":\"banho\",\"data\":\"2026-12-10\",\"horario\":\"14:00\"}"
+AGENDAMENTO_ID=$(echo "$CORPO" | jq -r '.id')
+echo "ID do agendamento criado: $AGENDAMENTO_ID"
+
+chamar GET /agendamentos 200
+chamar GET "/agendamentos/$AGENDAMENTO_ID" 200
+
+echo
+echo "##### 5. ATUALIZAR AGENDAMENTO (PUT E PATCH) #####"
+chamar PUT "/agendamentos/$AGENDAMENTO_ID" 200 "{\"clienteId\":$CLIENTE_ID,\"nomePet\":\"Thor\",\"especie\":\"Cachorro\",\"servico\":\"tosa\",\"data\":\"2026-12-11\",\"horario\":\"15:00\",\"status\":\"AGENDADO\"}"
+chamar PATCH "/agendamentos/$AGENDAMENTO_ID" 200 '{"status":"CONCLUIDO"}'
+
+echo
+echo "##### 6. TESTAR FILTROS #####"
+chamar GET "/agendamentos?status=CONCLUIDO" 200
+chamar GET "/agendamentos?servico=tosa" 200
+chamar GET "/agendamentos?status=CANCELADO" 200
+
+echo
+echo "##### 7. TESTAR ERROS (400 E 404) #####"
+chamar POST /clientes 400 '{"nome":"Sem Telefone"}'
+chamar POST /agendamentos 400 "{\"clienteId\":$CLIENTE_ID,\"nomePet\":\"Rex\"}"
+chamar GET /clientes/9999 404
+chamar GET /agendamentos/9999 404
+chamar POST /agendamentos 404 '{"clienteId":9999,"nomePet":"Rex","especie":"Cachorro","servico":"banho","data":"2026-12-10","horario":"10:00"}'
+chamar PUT /clientes/9999 404 '{"nome":"X","telefone":"1"}'
+chamar PATCH /agendamentos/9999 404 '{"status":"CANCELADO"}'
+chamar DELETE /clientes/9999 404
+
+echo
+echo "##### 8. REMOVER OS REGISTROS CRIADOS #####"
+chamar DELETE "/agendamentos/$AGENDAMENTO_ID" 200
+chamar DELETE "/clientes/$CLIENTE_ID" 200
+chamar GET "/clientes/$CLIENTE_ID" 404
+
+echo
+echo "=============================================="
+if [ "$FALHAS" -eq 0 ]; then
+  echo " FIM: todos os testes passaram."
+else
+  echo " FIM: $FALHAS teste(s) falharam."
+fi
+echo "=============================================="
