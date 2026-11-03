@@ -81,6 +81,52 @@ app.post('/clientes', (req, res) => {
   res.status(201).json(novo);
 });
 
+
+// Atualizar tudo (PUT)
+app.put('/clientes/:id', (req, res) => {
+  const cliente = buscarCliente(req.params.id);
+  if (!cliente) return erro404(res, 'Cliente não encontrado');
+
+  const body = req.body || {};
+  const faltando = camposFaltando(body, ['nome', 'telefone']);
+  if (faltando.length > 0) {
+    return erro400(res, `Campo(s) obrigatório(s) ausente(s): ${faltando.join(', ')}`);
+  }
+
+  cliente.nome = body.nome;
+  cliente.telefone = body.telefone;
+  cliente.email = body.email || null;
+  res.status(200).json(cliente);
+});
+
+// Atualizar só alguns campos (PATCH)
+app.patch('/clientes/:id', (req, res) => {
+  const cliente = buscarCliente(req.params.id);
+  if (!cliente) return erro404(res, 'Cliente não encontrado');
+
+  const body = req.body || {};
+  const vazios = ['nome', 'telefone'].filter(
+    (c) => body[c] !== undefined && String(body[c]).trim() === ''
+  );
+  if (vazios.length > 0) {
+    return erro400(res, `Campo(s) não podem ficar vazios: ${vazios.join(', ')}`);
+  }
+
+  ['nome', 'telefone', 'email'].forEach((c) => {
+    if (body[c] !== undefined) cliente[c] = body[c];
+  });
+  res.status(200).json(cliente);
+});
+
+// Remover
+app.delete('/clientes/:id', (req, res) => {
+  const indice = clientes.findIndex((c) => c.id === Number(req.params.id));
+  if (indice === -1) return erro404(res, 'Cliente não encontrado');
+
+  const removido = clientes.splice(indice, 1)[0];
+  res.status(200).json({ mensagem: 'Cliente removido com sucesso', cliente: removido });
+});
+
 // ===================== AGENDAMENTOS =====================
 // (Maély cola as rotas de agendamentos logo abaixo desta linha)
 
