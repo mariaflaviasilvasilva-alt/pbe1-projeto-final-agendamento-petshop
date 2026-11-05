@@ -187,7 +187,7 @@ Status recebido: 201
   "nomePet": "Thor",
   "especie": "Cachorro",
   "servico": "banho",
-  "data": "2026-12-10",
+  "data": "2026-12-10", 
   "horario": "14:00",
   "status": "AGENDADO"
 }
