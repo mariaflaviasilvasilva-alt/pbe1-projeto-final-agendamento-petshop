@@ -758,7 +758,7 @@ O histórico completo está na aba **Commits** do repositório no GitHub.
 **05/11/2026**
 - Atualização do Histórico de atualização - README (Maély Peixoto)
 
- **05/11/2025**
+ **05/11/2026**
 - Adiciona .gitignore para ignorar node_modules
 
 **02/11/2026**
