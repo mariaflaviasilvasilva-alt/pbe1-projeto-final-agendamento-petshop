@@ -753,9 +753,16 @@ O histórico completo está na aba **Commits** do repositório no GitHub.
 | `git push` | Envia os commits para o GitHub |
 
 ```
------------------------------------------------------------------
-
 >Histórico de Atualizações
+
+**05/11/2026**
+- Atualização do Histórico de atualização - README (Maély Peixoto)
+
+ **05/11/2025**
+- Adiciona .gitignore para ignorar node_modules
+
+**02/11/2026**
+- Remove node_modules do repositório
 
 **02/11/2026**
 - Atualiza README com saída do log e atualização do histórico de atualizações
@@ -798,3 +805,4 @@ O histórico completo está na aba **Commits** do repositório no GitHub.
 
 **02/11/2026**
 - Primeiro commit - Inicializando projeto
+
