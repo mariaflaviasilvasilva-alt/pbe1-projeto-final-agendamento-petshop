@@ -16,7 +16,7 @@ Os dados são armazenados temporariamente em memória durante a execução do se
 
 ---
 
-## Tecnologias Utilizadas
+## Tecnologias Utilizadas ᯤ🌐
 
 - **Node.js** e **Express**
 - **Bash**, **curl** e **jq**
@@ -26,7 +26,7 @@ Os dados são armazenados temporariamente em memória durante a execução do se
 
 ---
 
-## Acessando o servidor Linux 🌐
+## Acessando o servidor Linux 🌐🐧
 
 O projeto também foi executado no servidor Linux (Debian) da escola, acessado por SSH:
 
@@ -134,7 +134,7 @@ Os valores aceitos para o campo `status` são: `AGENDADO` (padrão ao criar), `C
 
 ## Campos e valores aceitos 📋
 
-### Cliente
+### Cliente 👥🤝
 
 | Campo | Obrigatório | Tipo | Exemplo | Observação |
 |-------|-------------|------|---------|------------|
@@ -143,7 +143,7 @@ Os valores aceitos para o campo `status` são: `AGENDADO` (padrão ao criar), `C
 | `telefone` | Sim | texto | `"11912345678"` | Não pode ser vazio |
 | `email` | Não | texto | `"maria@email.com"` | Se não for informado, fica salvo como `null` |
 
-### Agendamento
+### Agendamento 🗓️✎ᝰ.
 
 | Campo | Obrigatório | Tipo | Exemplo | Observação |
 |-------|-------------|------|---------|------------|
